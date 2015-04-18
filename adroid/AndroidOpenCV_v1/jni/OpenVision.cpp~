@@ -1,0 +1,30 @@
+#include <jni.h>
+#include "haarcascade_test.hpp"
+
+ class OpenCVProcess{
+    private:
+        haarcascade face;
+    public:
+
+        OpenCVProcess() {}
+
+        int run(int width, int height, signed char *_yuv, int* _bgra)
+        {
+            //decoding the camera data to BGRA Mat image
+            Mat myuv(height + height/2, width, CV_8UC1, (unsigned char *)_yuv);
+            Mat mbgra(height, width, CV_8UC4, (unsigned char *)_bgra);
+            cvtColor(myuv, mbgra, CV_YUV420sp2BGR, 4);
+            Mat image;
+            cvtColor(mbgra,image,CV_BGRA2BGR);
+            int flag=face.detect (image);
+            cvtColor(image,mbgra,CV_BGR2BGRA);
+            return flag;
+        }
+
+        void initDetector(const char* name)
+        {
+            face=haarcascade((char *)name);
+        }
+
+    };
+
